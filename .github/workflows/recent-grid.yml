@@ -1,6 +1,7 @@
-# 잔디(기여 그래프)를 뱀이 먹는 애니메이션 SVG를 만들어 output 브랜치에 올린다.
+# 최근 12주 기여 그래프(scripts/recent-grid.mjs)를 만들어 output 브랜치에 올린다.
 # README는 raw.githubusercontent.com/znan2/znan2/output/… 를 그린다(외부 카드 서비스에 기대지 않음).
-name: snake
+# 2026-10-26: 1년 전체를 그리던 뱀 애니메이션(Platane/snk)에서 최근 기간만 크게 보이는 그래프로 바꿨다.
+name: recent-grid
 
 on:
   schedule:
@@ -17,12 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: Platane/snk@v3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/github-snake.svg
-            dist/github-snake-dark.svg?palette=github-dark
+          node-version: 22
+
+      - run: node scripts/recent-grid.mjs ${{ github.repository_owner }} dist 12
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: crazy-max/ghaction-github-pages@v4
         with:
